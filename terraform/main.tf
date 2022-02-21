@@ -39,3 +39,10 @@ module "k8s_node" {
     do_region          = var.do_region
     ssh_keys           = var.ssh_fingerprint
 }
+
+module "haproxy_domain" {
+  source = "./modules/domain"
+
+  fqdn   = var.domain_haproxy
+  ip_address = module.haproxy.droplet_ipv4_address
+}

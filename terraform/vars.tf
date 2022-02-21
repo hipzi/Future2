@@ -27,6 +27,11 @@ variable "ssh_fingerprint" {
   description = "SSH key fingerprint"
 }
 
+variable "domain_haproxy" {
+  type        = string
+  description = "DigitalOcean Domain for Haproxy Server"
+}
+
 # Ansible
 
 variable "ansible_path" {
