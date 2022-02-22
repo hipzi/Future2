@@ -1,0 +1,4 @@
+metallb_helm_name: "metallb"
+metallb_helm_chart_ref: "metallb/metallb"
+metallb_helm_chart_version: "0.11.0"
+metallb_helm_namespace: "metallb-system"

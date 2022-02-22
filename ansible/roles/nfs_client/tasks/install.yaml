@@ -1,0 +1,17 @@
+- name: Add repo nfs client
+  kubernetes.core.helm_repository:
+    name: nfs-subdir-external-provisioner
+    repo_url: "https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner"
+  notify: Update helm repository
+
+- name: Deploy nfs client
+  kubernetes.core.helm:
+    name: "{{ nfs_client_helm_name }}"
+    chart_ref: "{{ nfs_client_helm_chart_ref }}"
+    chart_version: "{{ nfs_client_helm_chart_version }}"
+    release_namespace: "{{ nfs_client_helm_namespace }}"
+    values:
+      nfs:
+        server: "{{ hostvars[groups['haproxy'][0]]['ansible_default_ipv4'].address }}"
+        path: "{{ nfs_client_path }}"
+

@@ -1,0 +1,10 @@
+- name: Checking Docker version
+  include_tasks: check.yaml
+
+- name: Install Docker
+  include_tasks: install.yaml
+  when: docker_local_version.stdout|length == 0 or docker_local_version.stdout != docker_version
+
+- name: Config Docker 
+  include_tasks: config.yaml
+  when: docker_local_version.stdout|length == 0 or docker_local_version.stdout != docker_version

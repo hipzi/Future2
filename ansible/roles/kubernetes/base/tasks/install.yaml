@@ -1,0 +1,55 @@
+- name: Add Kubernetes Repository
+  yum_repository:
+    name: Kubernetes
+    file: Kubernetes
+    description: Kubernetes
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    enabled: yes
+    gpgcheck: yes
+
+- name: Install Kubelet, Kubeadm, Kubectl
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - kubelet-{{ kubelet_version }}
+      - kubeadm-{{ kubeadm_version }}
+      - kubectl-{{ kubectl_version }}
+
+- name: Start Kubelet and enable it
+  systemd:
+    name: kubelet
+    enabled: yes
+    state: started
+
+- name: Enable firewall masquerade for kubernetes
+  firewalld:
+    masquerade: "yes"
+    permanent: yes
+    immediate: yes
+    state: enabled
+  notify: Reload firewalld
+
+- name: Enable firewall port for kubernetes
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    immediate: yes
+    state: enabled
+  loop:
+    - 443/udp
+    - 6443/tcp 
+    - 10250/tcp
+    - 10251/tcp
+    - 10252/tcp
+    - 10255/tcp
+    - 8472/udp    
+    - 2379/tcp
+    - 2380/tcp 
+    - 4789/udp 
+    - 5473/tcp 
+    - 179/tcp 
+    - 80/tcp 
+  notify: Reload firewalld
+

@@ -1,0 +1,31 @@
+- hosts: kubernetes_cluster
+  become: true
+  roles:
+    - common
+    - docker
+    - kubernetes/base
+
+- hosts: haproxy
+  become: true
+  roles:
+    - common
+    - haproxy
+    - nfs
+
+- hosts: master
+  become: true
+  roles:
+    - kubernetes/master/base
+    - cni/calico
+    - helm
+    - kubernetes/join
+
+- hosts: master_ha
+  become: true
+  roles:
+    - kubernetes/master/ha
+
+- hosts: worker
+  become: true
+  roles:
+    - kubernetes/worker

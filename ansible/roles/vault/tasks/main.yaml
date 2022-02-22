@@ -1,0 +1,10 @@
+- name: Checking chart vault version
+  include_tasks: check.yaml
+
+- name: Install vault
+  include_tasks: install.yaml
+  when: chart_vault_local_version.stdout|length == 0 or chart_vault_local_version.stdout != vault_helm_chart_version
+
+- name: Config vault
+  include_tasks: config.yaml
+  when: chart_vault_local_version.stdout|length == 0 or chart_vault_local_version.stdout != vault_helm_chart_version

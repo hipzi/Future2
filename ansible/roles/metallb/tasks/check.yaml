@@ -1,0 +1,10 @@
+- name: Get chart metallb local version 
+  shell: helm list -n metallb-system | awk -F'-' '$0=$5'| awk '{print $1}'
+  ignore_errors: true 
+  register: chart_metallb_local_version
+  changed_when: chart_metallb_local_version.stdout|length == 0
+
+- name: Print chart metallb local version
+  debug:
+    msg: "{{ chart_metallb_local_version.stdout }}"
+  when: chart_metallb_local_version.stdout|length != 0

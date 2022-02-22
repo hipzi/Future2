@@ -1,0 +1,119 @@
+- name: Install dependency 
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - gcc
+    - glibc-devel
+    - kernel-devel
+    - lua-devel
+    - openssl
+    - openssl-devel
+    - pcre-devel
+    - zlib-devel
+    - systemd-devel
+
+- name: Download haproxy
+  get_url:
+    url: "http://www.haproxy.org/download/{{haproxy_version}}/src/haproxy-{{haproxy_version_detail}}.tar.gz"
+    dest: /root/
+
+- name: Extract haproxy
+  unarchive:
+    src: "/root/haproxy-{{haproxy_version_detail}}.tar.gz"
+    dest: /root/
+    remote_src: yes
+
+- name: Build 'all' haproxy with extra arguments
+  make:
+    chdir: "/root/haproxy-{{haproxy_version_detail}}"
+    target: all
+    params:
+      TARGET: linux-glibc-legacy
+      USE_PCRE: 1
+      USE_OPENSSL: 1
+      USE_ZLIB: 1
+      USE_CRYPT_H: 1
+      USE_LIBCRYPT: 1
+      EXTRA_OBJS: "contrib/prometheus-exporter/service-prometheus.o"
+
+- name: Run 'install' haproxy 
+  make:
+    chdir: "/root/haproxy-{{haproxy_version_detail}}"
+    target: install
+
+- name: Creates directory haproxy
+  file:
+    path: /etc/haproxy
+    state: directory
+
+- name: Creates directory lib haproxy
+  file:
+    path: /var/lib/haproxy
+    state: directory
+
+- name: Creates file stats haproxy
+  file:
+    path: /var/lib/haproxy/stats
+    state: touch
+
+- name: Link haproxy
+  file: 
+    src: /usr/local/sbin/haproxy
+    dest: /usr/sbin/haproxy
+    state: link
+
+- name: Copy file 
+  copy:
+    src: "/root/haproxy-{{haproxy_version_detail}}/examples/haproxy.init"
+    dest: /etc/init.d/haproxy
+    mode: '0755'
+    remote_src: yes
+
+- name: Reload daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Setting sebool haproxy_connect_any
+  seboolean:
+    name: haproxy_connect_any
+    state: yes
+    persistent: yes
+
+- name: Configuring HAProxy
+  template:
+    src: "haproxy.conf.j2"
+    dest: /etc/haproxy/haproxy.cfg
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Add group haproxy 
+  group:
+    name: haproxy
+    state: present
+
+- name: Add the user haproxy in group of haproxy
+  user:
+    name: haproxy
+    group: haproxy
+
+- name: Start HAProxy and enable it
+  systemd:
+    name: haproxy
+    enabled: yes
+    state: started
+
+- name: Configure firewall port 6443 and 8404 for kubernetes apiserver, stats
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    immediate: yes
+    state: enabled
+  loop:
+    - 6443/tcp
+    - 8404/tcp
+  notify: Reload firewalld
+
+
+  

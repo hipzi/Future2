@@ -1,0 +1,27 @@
+- name: Switch off swap
+  command: swapoff -a
+
+- name: Disable Swap
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+
+- name: Disabled /swap on fstab
+  replace:
+    dest: /etc/fstab
+    regexp: '^/swapfile'
+    replace: '#/swapfile'
+
+- name: Install nfs-utils
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - nfs-utils
+    - libsemanage-python
+
+- name: Add epel-release
+  yum:
+    name: epel-release
+    state: present

@@ -1,0 +1,36 @@
+- name: Start NFS and enable it
+  service: 
+    name: nfs
+    state: started 
+    enabled: yes         
+
+- name: Change owner in mountable directory 
+  file:
+    path: "{{ path_file_shared }}"
+    state: directory
+    recurse: yes
+    mode: '0775'
+    owner: '1000'
+    group: '1000'
+
+- name: Copy exports file
+  template:
+    src: templates/exports.j2
+    dest: /etc/exports
+  register: exports
+
+- name: Kick exportfs if /etc/exports changed
+  shell: exportfs -rav
+  when: exports.changed
+  notify: Reload nfs
+
+- name: Open port (nfs, rpcbind, mountd) to firewalld
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+  loop:
+    - 2049/tcp
+    - 111/tcp
+    - 20048/tcp
+  notify: Reload firewalld

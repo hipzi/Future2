@@ -1,0 +1,6 @@
+- name: Checking chart nfs client version
+  include_tasks: check.yaml
+
+- name: Install nfs client
+  include_tasks: install.yaml
+  when: chart_nfs_client_local_version.stdout|length == 0 or chart_nfs_client_local_version.stdout != nfs_client_helm_chart_version

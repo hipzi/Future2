@@ -1,0 +1,4 @@
+jenkins_helm_name: "jenkins"
+jenkins_helm_chart_ref: "jenkinsci/jenkins"
+jenkins_helm_chart_version: "3.11.4"
+jenkins_helm_namespace: "jenkins"

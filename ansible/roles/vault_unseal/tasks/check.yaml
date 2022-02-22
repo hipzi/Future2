@@ -1,0 +1,10 @@
+- name: Get chart vault unseal local version 
+  shell: helm list -n vault | awk -F'-' '$0=$8'| awk '{print $1}'
+  ignore_errors: true 
+  register: chart_vault_unseal_local_version
+  changed_when: chart_vault_unseal_local_version.stdout|length == 0
+
+- name: Print chart vault unseal local version
+  debug:
+    msg: "{{ chart_vault_unseal_local_version.stdout }}"
+  when: chart_vault_unseal_local_version.stdout|length != 0

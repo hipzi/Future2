@@ -1,0 +1,10 @@
+- name: Get haproxy local version 
+  shell: haproxy -version 2>&1 | awk '/version/{print $3}'
+  ignore_errors: true 
+  register: haproxy_local_version
+  changed_when: haproxy_local_version.stdout|length == 0
+
+- name: Print haproxy local version 
+  debug:
+    msg: "{{ haproxy_local_version.stdout }}"
+  when: haproxy_local_version.stdout|length != 0

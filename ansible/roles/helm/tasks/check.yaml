@@ -1,0 +1,10 @@
+- name: Get helm local version 
+  shell: helm version 2>&1 | awk -F'"' '{print substr($0=$2,2)}'
+  ignore_errors: true 
+  register: helm_local_version
+  changed_when: helm_local_version.stdout|length == 0
+
+- name: Print helm local version 
+  debug:
+    msg: "{{ helm_local_version.stdout }}"
+  when: helm_local_version.stdout|length != 0

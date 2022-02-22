@@ -1,0 +1,6 @@
+- name: Checking chart metallb version
+  include_tasks: check.yaml
+
+- name: Install metallb
+  include_tasks: install.yaml
+  when: chart_metallb_local_version.stdout|length == 0 or chart_metallb_local_version.stdout != metallb_helm_chart_version

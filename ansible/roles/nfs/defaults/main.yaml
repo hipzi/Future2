@@ -1,0 +1,4 @@
+path_file_shared: /root/data
+jenkins_path_file_shared: /root/data/jenkins
+mongodb_path_file_shared: /root/hipzi/data/jenkins
+

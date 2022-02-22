@@ -1,0 +1,36 @@
+- name: Add br_netfilter module
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- name: Add overlay module
+  modprobe:
+    name: overlay
+    state: present
+
+- name: Persist systemd module on reboot
+  template:
+    src: "kubernetes.conf.j2"
+    dest: "/etc/modules-load.d/"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable and run systemd-load-modules service
+  systemd:
+    name: systemd-modules-load
+    enabled: yes
+    state: started
+
+- name: Enable ipv4 forwarding, iptable bridge
+  sysctl:
+    name: "{{ item }}"
+    value: '1'
+    sysctl_file: /etc/sysctl.d/11-kubernetes.conf
+    sysctl_set: yes
+    reload: yes
+  loop:
+    - net.ipv4.ip_forward
+    - net.bridge.bridge-nf-call-iptables
+    - net.bridge.bridge-nf-call-ip6tables
+    - net.bridge.bridge-nf-call-arptables

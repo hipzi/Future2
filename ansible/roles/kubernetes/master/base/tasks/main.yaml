@@ -1,0 +1,5 @@
+- name: Install Kubernetes Master
+  include_tasks: install.yaml
+
+- name: Configure Kubernetes Master
+  include_tasks: config.yaml

@@ -1,0 +1,5 @@
+- name: Join Kubernetes Cluster
+  shell: |
+    {{ hostvars['master_worker_host']['master_join_command'] }} \
+    --ignore-preflight-errors all
+  register: init_cluster

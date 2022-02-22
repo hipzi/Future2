@@ -1,0 +1,43 @@
+- name: Get kubeadm local version 
+  shell: kubeadm version 2>&1 | awk -F'"' '$0=$6' | awk '{print substr($0,2)}'
+  ignore_errors: true 
+  register: kubeadm_local_version
+  changed_when: kubeadm_local_version.stdout|length == 0
+
+- name: Print kubeadm local version
+  debug:
+    msg: "{{ kubeadm_local_version.stdout }}"
+  when: kubeadm_local_version.stdout|length != 0
+
+- name: Get kubelet local version 
+  shell: kubelet --version 2>&1 | awk '/v/{print substr($2,2)}'
+  ignore_errors: true 
+  register: kubelet_local_version
+  changed_when: kubelet_local_version.stdout|length == 0  
+
+- name: Print kubelet local version
+  debug:
+    msg: "{{ kubelet_local_version.stdout }}"
+  when: kubelet_local_version.stdout|length != 0  
+
+- name: Get kubectl local version 
+  shell: kubectl version 2>&1 | awk -F'"' '$0=$6' | awk '{print substr($0,2)}'
+  ignore_errors: true 
+  register: kubectl_local_version
+  changed_when: kubectl_local_version.stdout|length == 0  
+
+- name: Print kubectl local version
+  debug:
+    msg: "{{ kubectl_local_version.stdout }}"
+  when: kubectl_local_version.stdout|length != 0
+
+- name: Get kubernetes local version
+  shell: echo "{{ kubeadm_local_version.stdout }}"
+  register: kubernetes_local_version
+  changed_when: kubernetes_local_version.stdout|length == 0 
+  when: kubeadm_local_version.stdout == kubelet_local_version.stdout == kubectl_local_version.stdout
+
+- name: Print kubernetes local version
+  debug:
+    msg: "{{ kubernetes_local_version.stdout }}"
+  when: kubernetes_local_version.stdout|length != 0

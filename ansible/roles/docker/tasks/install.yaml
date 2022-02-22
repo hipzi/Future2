@@ -1,0 +1,18 @@
+- name: Install yum utils
+  yum:
+    name: yum-utils
+    state: latest
+
+- name: Add Docker Repository
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+
+- name: Install Docker Container Engine
+  yum:
+    name: "{{ item }}"
+  loop:
+    - docker-ce-{{ docker_version }}.*
+    - docker-ce-cli-{{ docker_version }}.*
+    - containerd.io
+

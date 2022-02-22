@@ -1,0 +1,2 @@
+- name: Join kubernetes
+  include_tasks: join.yaml

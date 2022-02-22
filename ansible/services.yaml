@@ -1,0 +1,9 @@
+- hosts: master
+  become: true
+  roles:
+    - metallb
+    - ingress
+    - nfs_client
+    - vault
+    - vault_unseal
+    - secret

@@ -1,0 +1,10 @@
+- name: Get chart ingress local version 
+  shell: helm list -n ingress-nginx | awk -F'-' '$0=$6'| awk '{print $1}'
+  ignore_errors: true 
+  register: chart_ingress_local_version
+  changed_when: chart_ingress_local_version.stdout|length == 0
+
+- name: Print chart ingress local version
+  debug:
+    msg: "{{ chart_ingress_local_version.stdout }}"
+  when: chart_ingress_local_version.stdout|length != 0

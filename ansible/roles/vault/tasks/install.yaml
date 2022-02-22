@@ -1,0 +1,19 @@
+- name: Add repo hashicorp vault 
+  kubernetes.core.helm_repository:
+    name: hashicorp
+    repo_url: "https://helm.releases.hashicorp.com"
+  notify: Update helm repository
+
+- name: Helm values hashicorp vault 
+  copy:
+    src: "vault-values.yaml"
+    dest: /root/vault-values.yaml
+
+- name: Deploy vault 
+  kubernetes.core.helm:
+    name: "{{ vault_helm_name }}"
+    chart_ref: "{{ vault_helm_chart_ref }}"
+    chart_version: "{{ vault_helm_chart_version }}"
+    release_namespace: "{{ vault_helm_namespace }}"
+    create_namespace: yes
+    values_files: /root/vault-values.yaml

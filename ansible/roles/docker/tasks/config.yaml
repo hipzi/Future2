@@ -1,0 +1,27 @@
+- name: Create directory /etc/docker
+  file:
+    path: /etc/docker
+    state: directory
+    mode: '0755'
+
+- name: Config docker (change cgroup to systemd)
+  template:
+    src: config-docker.json.j2
+    dest: /etc/docker/daemon.json
+    mode: '0644'
+  notify: Reload systemd
+
+- name: Force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers
+
+- name: Start Docker and enable it
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Setting sebool container_manage_cgroup
+  seboolean:
+    name: container_manage_cgroup
+    state: yes
+    persistent: yes

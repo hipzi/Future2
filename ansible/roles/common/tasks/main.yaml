@@ -1,0 +1,5 @@
+- name: Install Firewall
+  include_tasks: install.yaml
+
+- name: Configure Common Server Setting
+  include_tasks: config.yaml

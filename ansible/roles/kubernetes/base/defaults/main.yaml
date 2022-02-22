@@ -1,0 +1,4 @@
+kubernetes_version: "1.22.2"
+kubeadm_version: "1.22.2"
+kubelet_version: "1.22.2"
+kubectl_version: "1.22.2"

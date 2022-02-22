@@ -1,0 +1,28 @@
+- name: Add repo metallb 
+  kubernetes.core.helm_repository:
+    name: metallb
+    repo_url: "https://metallb.github.io/metallb"
+  notify: Update helm repository
+
+- name: Copy script ip 
+  template:
+    src: "ip.sh.j2"
+    dest: /root/ip.sh
+
+- name: Run script ip
+  shell: bash /root/ip.sh
+  register: metallb_ip_range
+
+- name: Copy helm values metallb 
+  template:
+    src: "metallb-values.yaml.j2"
+    dest: /root/metallb-values.yaml
+
+- name: Deploy metallb 
+  kubernetes.core.helm:
+    name: "{{ metallb_helm_name }}"
+    chart_ref: "{{ metallb_helm_chart_ref }}"
+    chart_version: "{{ metallb_helm_chart_version }}"
+    release_namespace: "{{ metallb_helm_namespace }}"
+    create_namespace: yes
+    values_files: /root/metallb-values.yaml

@@ -1,0 +1,2 @@
+- name: Join Kubernetes Cluster for Master
+  include_tasks: join.yaml

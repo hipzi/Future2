@@ -1,0 +1,5 @@
+nfs_client_path: "/root/data"
+nfs_client_helm_name: "nfs-subdir-external-provisioner"
+nfs_client_helm_chart_ref: "nfs-subdir-external-provisioner/nfs-subdir-external-provisioner"
+nfs_client_helm_chart_version: "4.0.16"
+nfs_client_helm_namespace: "default"

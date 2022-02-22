@@ -1,0 +1,28 @@
+- name: Add repo jenkins
+  kubernetes.core.helm_repository:
+    name: jenkinsci
+    repo_url: "https://charts.jenkins.io"
+  notify: Update helm repository
+
+- name: Copy manifest jenkins service accounts
+  template:
+    src: "jenkins-sa.yaml.j2"
+    dest: /root/jenkins-sa.yaml
+
+- name: Create a jenkins service accounts
+  k8s:
+    src: /root/jenkins-sa.yaml
+    state: present
+
+- name: Copy helm values jenkins 
+  copy:
+    src: "jenkins-values.yaml"
+    dest: /root/jenkins-values.yaml
+
+- name: Deploy jenkins 
+  kubernetes.core.helm:
+    name: "{{ jenkins_helm_name }}"
+    chart_ref: "{{ jenkins_helm_chart_ref }}"
+    chart_version: "{{ jenkins_helm_chart_version }}"
+    release_namespace: "{{ jenkins_helm_namespace }}"
+    values_files: /root/jenkins-values.yaml

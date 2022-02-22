@@ -1,0 +1,6 @@
+- name: Checking chart jenkins version
+  include_tasks: check.yaml
+
+- name: Install jenkins
+  include_tasks: install.yaml
+  when: chart_jenkins_local_version.stdout|length == 0 or chart_jenkins_local_version.stdout != jenkins_helm_chart_version

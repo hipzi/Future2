@@ -1,0 +1,5 @@
+vault_url: "http://vault.vault.svc.cluster.local:8200"
+vault_unseal_helm_name: "vault-unseal-cronjob"
+vault_unseal_helm_chart_ref: "omegion/vault-unseal-cronjob"
+vault_unseal_helm_chart_version: "0.4.0"
+vault_unseal_helm_namespace: "vault"

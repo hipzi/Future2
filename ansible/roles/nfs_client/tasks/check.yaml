@@ -1,0 +1,10 @@
+- name: Get chart nfs client local version 
+  shell: helm list -n default | awk -F'-' '$0=$10'| awk '{print $1}'
+  ignore_errors: true 
+  register: chart_nfs_client_local_version
+  changed_when: chart_nfs_client_local_version.stdout|length == 0
+
+- name: Print chart nfs client local version
+  debug:
+    msg: "{{ chart_nfs_client_local_version.stdout }}"
+  when: chart_nfs_client_local_version.stdout|length != 0

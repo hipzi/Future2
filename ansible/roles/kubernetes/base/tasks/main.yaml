@@ -1,0 +1,10 @@
+- name: Checking Kubernetes version
+  include_tasks: check.yaml
+
+- name: Configure Common Kubernetes Server Setting
+  include_tasks: config.yaml
+
+- name: Install Kubernetes
+  include_tasks: install.yaml
+  when: (kubernetes_local_version.stdout|length == 0) or (kubernetes_local_version.stdout != kubernetes_version)
+

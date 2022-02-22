@@ -1,0 +1,19 @@
+- name: Add repo ingress nginx 
+  kubernetes.core.helm_repository:
+    name: ingress-nginx
+    repo_url: "https://kubernetes.github.io/ingress-nginx"
+  notify: Update helm repository
+
+- name: Copy helm values ingress nginx
+  template:
+    src: "ingress-nginx-values.yaml.j2"
+    dest: /root/ingress-nginx-values.yaml
+
+- name: Deploy ingress nginx 
+  kubernetes.core.helm:
+    name: "{{ ingress_helm_name }}"
+    chart_ref: "{{ ingress_helm_chart_ref }}"
+    chart_version: "{{ ingress_helm_chart_version }}"
+    release_namespace: "{{ ingress_helm_namespace }}"
+    create_namespace: yes
+    values_files: /root/ingress-nginx-values.yaml

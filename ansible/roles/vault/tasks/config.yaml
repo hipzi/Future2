@@ -1,0 +1,49 @@
+- name: Wait for pods vault to come up
+  shell: kubectl get pods vault-0 -o json -n vault
+  register: kubectl_get_pods
+  until: kubectl_get_pods.stdout|from_json|json_query('status.phase')=="Running"
+
+- name: Initialize vault
+  shell: kubectl exec -it vault-0 -n vault -- vault operator init > vault-key.log
+
+- name: Unseal key 1 vault
+  shell: cat vault-key.log | grep 'Unseal Key 1' | awk '{print $4}' | sed 's/\x1b\[[0-9;]*m//g'
+  register: vault_unseal_key_1
+
+- name: Unseal key 2 vault
+  shell: cat vault-key.log | grep 'Unseal Key 2' | awk '{print $4}' | sed 's/\x1b\[[0-9;]*m//g'
+  register: vault_unseal_key_2
+
+- name: Unseal key 3 vault
+  shell: cat vault-key.log | grep 'Unseal Key 3' | awk '{print $4}' | sed 's/\x1b\[[0-9;]*m//g'
+  register: vault_unseal_key_3
+
+- name: Token vault
+  shell: cat vault-key.log | grep 'Initial Root Token' | awk '{print $4}' | sed 's/\x1b\[[0-9;]*m//g'
+  register: vault_token
+
+- name: Send vault token via email
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: "{{ gmail_mail }}"
+    password: "{{ gmail_app_password }}"
+    to: "{{ gmail_mail }}"
+    subject: "FUTURE : Vault Token"
+    body: "{{ vault_token.stdout }}"
+
+- name: Create namespace jenkins
+  k8s:
+    name: jenkins
+    api_version: v1
+    kind: Namespace
+    state: present  
+
+- name: Create kubernetes secret for vault 
+  shell: |  
+    kubectl create secret generic vault-credentials \
+      --from-literal=CASC_VAULT_TOKEN={{ vault_token.stdout }} \
+      --from-literal=CASC_VAULT_URL='{{ vault_url }}' \
+      --from-literal=CASC_VAULT_ENGINE_VERSION={{ vault_engine_version }} \
+      --from-literal=CASC_VAULT_PATHS='{{ vault_path }}' \
+      --namespace jenkins

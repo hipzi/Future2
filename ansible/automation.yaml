@@ -1,0 +1,11 @@
+- name: Automation
+  hosts: all
+
+- name: Kubernetes
+  import_playbook: kubernetes.yaml
+
+- name: Services
+  import_playbook: services.yaml
+  
+- name: Jenkins
+  import_playbook: jenkins.yaml

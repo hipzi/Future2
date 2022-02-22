@@ -1,0 +1,12 @@
+#!/bin/bash
+
+ip={{ inventory_hostname }}
+
+IFS='.' read -r -a ip_address <<< "$ip"
+
+ip_range="$((ip_address[3] + 10))"
+{% raw %}
+concat_ip_1=$(IFS=. ; echo "${ip_address[*]::${#ip_address[*]}-1}")
+{% endraw %}
+concat_ip_2="${concat_ip_1}.${ip_range}"
+echo "$concat_ip_2"

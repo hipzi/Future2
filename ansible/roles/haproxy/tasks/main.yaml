@@ -1,0 +1,6 @@
+- name: Checking HAProxy version
+  include_tasks: check.yaml
+
+- name: Install HAProxy
+  include_tasks: install.yaml
+  when: haproxy_local_version.stdout|length == 0 or haproxy_local_version.stdout != haproxy_version
