@@ -63,7 +63,7 @@ resource "local_file" "ansible_config" {
     [defaults]
     host_key_checking = ${var.ansible_host_key_checking}
     inventory = ${local_file.ansible_inventory.filename}
-    roles_path =  ${var.ansible_host_key_checking}
+    vault_password_file = ${var.ansible_vault_file_path}
   EOT
 }
 

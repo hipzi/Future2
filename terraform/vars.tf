@@ -39,13 +39,13 @@ variable "ansible_path" {
   description = "Ansible Path" 
 }
 
-variable "ansible_roles_path" {
-  type        = string
-  description = "Ansible Roles Path" 
-}
-
 variable "ansible_host_key_checking" {
   type        = bool
+}
+
+variable  "ansible_vault_file_path" {
+  type        = string
+  description = "Ansible Vault Path" 
 }
 
 # Key
