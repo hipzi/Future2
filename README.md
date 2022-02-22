@@ -8,6 +8,7 @@
 <justify></justify>
 <a id="high-level"></a>
 <p></p>
+
 ![high-level](img/high-level-architecture.png)
 
 ## Low Level Architecture
