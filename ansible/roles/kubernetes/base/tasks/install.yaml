@@ -53,3 +53,10 @@
     - 80/tcp 
   notify: Reload firewalld
 
+- name: Enable firewall port for node exporter
+  firewalld:
+    port: 9100/tcp
+    permanent: yes
+    immediate: yes
+    state: enabled
+  notify: Reload firewalld
